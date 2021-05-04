@@ -1,0 +1,65 @@
+#version: '3.1'
+#services:
+#  app:
+#    container_name: app-container
+#    image: docker-spring-boot
+#    build: ./
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#  db:
+#    image: postgres:alpine
+#    container_name: db_instance
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_PASSWORD=hrhk
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=emp
+#
+#version: '3.1'
+#services:
+#  app:
+#    container_name: springboot-postgresql
+#    image: springboot-postgresql
+#    build: ./
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - postgresqldb
+#  postgresqldb:
+#    image: postgres:alpine
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_PASSWORD=hrhk
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=emp
+
+version: '3.5'
+services:
+  postgresdb:
+    image: postgres:alpine
+    restart: always
+    container_name: "postgresdb"
+    environment:
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=emp
+      - POSTGRES_HOST=postgresdb
+      - POSTGRES_PASSWORD=hrhk
+      - POSTGRES_USER=postgres
+    ports:
+      - 5432:5432
+
+
+  web:
+    build: ./
+    links:
+      - postgresdb
+    container_name: crud-service
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresdb
